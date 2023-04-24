@@ -15,7 +15,7 @@ env.config();
 
 const port = process.env.PORT || 2000;
 mongoose
-  .connect(`mongodb://localhost:27017/home`, {
+  .connect(`mongodb+srv://mom:mommy@cluster0.8gbdb.mongodb.net/home?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
