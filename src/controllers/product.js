@@ -73,82 +73,41 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-// exports.createProduct = (req, res) => {
-//   const { name, price, description, category, createdBy, quantity } = req.body;
+exports.createProductReview = async (req, res) => {
+  const { rating, comment, productId } = req.body;
 
-//   let productPictures = [];
-//   if (req.files.length > 0) {
-//     req.files.map((pix) => {
-//       productPictures.push({ img: pix.filename });
-//       return productPictures;
-//     });
-//   }
+  const review = {
+    user: req.user._id,
+    name: req.user.name,
+    rating: Number(rating),
+    comment,
+  };
 
-//   const product = new Product({
-//     name: name,
-//     slug: slugify(name),
-//     price,
-//     description,
-//     productPictures,
-//     category,
-//     createdBy: req.user._id,
-//     quantity,
-//   });
+  const product = await Product.findById(productId);
 
-//   product.save((err, product) => {
-//     if (err) return res.status(400).json({ err });
-//     if (product) return res.status(200).json({ product });
-//   });
-//   // res.status(200).json({file: req.files, body: req.body})
-// };
+  const isReviewed = product.reviews.find(
+    (r) => r.user.toString() === req.user._id.toString()
+  );
 
-// exports.getProductSlug = (req, res) => {
-//   const { slug } = req.params;
+  if (isReviewed) {
+    product.reviews.forEach((review) => {
+      if (review.user.toString() === req.user._id.toString()) {
+        review.comment = comment;
+        review.rating = rating;
+      }
+    });
+  } else {
+    product.reviews.push(review);
+    product.numOfReviews = product.reviews.length;
+  }
 
-//   Category.findOne({ slug: slug })
-//     .select("_id type")
-//     .exec((err, category) => {
-//       if (err) return res.status(400).json({ err });
-//       if (category)
-//         Product.find({ category: category._id })
-//         .exec((err, products) => {
-//           if (err) return res.status(400).json({ err });
-//           if (category.type) {
-//             if (products.length > 0) {
-//               return res.status(200).json({
-//                 products,
-//                 productsByPrice: {
-//                   under50k: products.filter((product) => product.price < 50000),
-//                   under100k: products.filter(
-//                     (product) =>
-//                       product.price < 100000 && product.price >= 50000
-//                   ),
-//                   under200k: products.filter(
-//                     (product) =>
-//                       product.price < 200000 && product.price >= 100000
-//                   ),
-//                   under800k: products.filter(
-//                     (product) =>
-//                       product.price <= 800000 && product.price >= 200000
-//                   ),
-//                 },
-//               });
-//             }
-//           }else {
-//             res.status(200).json({products})
-//           }
-//         });
-//     });
-// };
+  product.ratings =
+    product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+    product.reviews.length;
 
-// exports.getProductDetailsId = (req, res) => {
-//   const { productId } = req.params;
-//   if (productId) {
-//     Product.findOne({ _id: productId }).exec((err, product) => {
-//       if (err) return res.status(400).json({ err });
-//       if (product) return res.status(200).json({ product });
-//     });
-//   } else {
-//     return res.status(400).json({ error: "params required" });
-//   }
-// };
+  await product.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+  });
+};
