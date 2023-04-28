@@ -14,8 +14,10 @@ const blog =  require('./src/routes/blog')
 env.config();
 
 const port = process.env.PORT || 2000;
+"mongodb://localhost:27017/jumia"
+// `mongodb+srv://mom:mommy@cluster0.8gbdb.mongodb.net/home?retryWrites=true&w=majority
 mongoose
-  .connect(`mongodb+srv://mom:mommy@cluster0.8gbdb.mongodb.net/home?retryWrites=true&w=majority`, {
+  .connect(`mongodb://localhost:27017/home`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
