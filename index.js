@@ -12,7 +12,6 @@ const billingRoute = require("./src/routes/billing");
 const userRoute = require('./src/routes/user')
 const blog =  require('./src/routes/blog')
 env.config();
-
 const port = process.env.PORT || 2000;
 "mongodb://localhost:27017/jumia"
 // `mongodb+srv://mom:mommy@cluster0.8gbdb.mongodb.net/home?retryWrites=true&w=majority
