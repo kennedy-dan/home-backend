@@ -84,3 +84,25 @@ exports.getCartItems = (req, res) => {
       }
     });
 };
+
+exports.removeCartItems = (req, res) => {
+  // console.log(req.body)
+  const { productId } = req.params;
+  if (productId) {
+    Cart.update(
+      {},
+      {
+        $pull: {
+          cartItems: {
+            product: productId,
+          },
+        },
+      }
+    ).exec((error, result) => {
+      if (error) return res.status(400).json({ error });
+      if (result) {
+        res.status(202).json({ result });
+      }
+    });
+  }
+};

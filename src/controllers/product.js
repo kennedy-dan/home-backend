@@ -74,12 +74,15 @@ exports.getProductById = async (req, res) => {
 };
 
 exports.createProductReview = async (req, res) => {
-  const { rating, comment, productId } = req.body;
+  // const { _id } = req.params;
+
+  const { rating, comment, productId, name } = req.body;
 
   const review = {
     user: req.user._id,
     name: req.user.name,
     rating: Number(rating),
+    name,
     comment,
   };
 
@@ -94,6 +97,7 @@ exports.createProductReview = async (req, res) => {
       if (review.user.toString() === req.user._id.toString()) {
         review.comment = comment;
         review.rating = rating;
+        review.name = name
       }
     });
   } else {
